@@ -1,17 +1,17 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 import sqlite3
 
-# 1️⃣ Flask app setup
+# Flask app setup
 app = Flask(__name__)
 app.secret_key =  "secret123"
 
-# 2️⃣ Database functions
+# Database functions
 def get_db():
     conn = sqlite3.connect("database.db")
     conn.row_factory = sqlite3.Row
     return conn
 
-# 3️⃣ Create tables if they don't exist
+# Create tables if they don't exist
 def create_tables():
     conn = get_db()
     cursor = conn.cursor()
@@ -47,6 +47,12 @@ def create_tables():
 
     conn.commit()
     conn.close()
+
+# Fixes the 404 error on the home route
+@app.route("/")
+def home():
+    return "Flask is running successfully!"
+
 
 # User Registration
 @app.route("/register", methods=["GET", "POST"])
