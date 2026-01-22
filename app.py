@@ -133,7 +133,7 @@ def admin():
     return render_template("admin.html")
 
 
-# 4️⃣ App runner (ALWAYS LAST)
+# App runner (ALWAYS LAST)
 if __name__ == "__main__":
     create_tables()
     app.run(debug=True)
