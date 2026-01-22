@@ -1,3 +1,4 @@
+from blockchain import create_block
 from flask import Flask, render_template, request, redirect, session, url_for
 import sqlite3
 
@@ -101,13 +102,57 @@ def login():
     return render_template("login.html")
 
 # Voting Page
-@app.route("/vote")
+@app.route("/vote", methods=["GET", "POST"])
 def vote():
     if "user_id" not in session:
         return redirect("/login")
 
     conn = get_db()
     cursor = conn.cursor()
+
+    if request.method == "POST":
+        if session["has_voted"] == 1:
+            return "You have already voted!"
+
+        candidate_id = request.form["candidate_id"]
+        voter_id = session["user_id"]
+
+        # Get previous hash
+        cursor.execute(
+            "SELECT current_hash FROM blockchain ORDER BY id DESC LIMIT 1"
+        )
+        last_block = cursor.fetchone()
+
+        previous_hash = last_block["current_hash"] if last_block else "0"
+
+        # Create blockchain block
+        block = create_block(voter_id, candidate_id, previous_hash)
+
+        # Store block in database
+        cursor.execute("""
+        INSERT INTO blockchain
+        (voter_id, candidate_id, timestamp, previous_hash, current_hash)
+        VALUES (?, ?, ?, ?, ?)
+        """, (
+            block["voter_id"],
+            block["candidate_id"],
+            block["timestamp"],
+            block["previous_hash"],
+            block["current_hash"]
+        ))
+
+        cursor.execute(
+            "UPDATE users SET has_voted = 1 WHERE id = ?",
+            (voter_id,)
+        )
+
+        conn.commit()
+        conn.close()
+
+        session["has_voted"] = 1
+
+        return "Vote cast successfully!"
+
     cursor.execute("SELECT * FROM candidates")
     candidates = cursor.fetchall()
     conn.close()
