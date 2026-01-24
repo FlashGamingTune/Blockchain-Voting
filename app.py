@@ -52,7 +52,7 @@ def create_tables():
 # Fixes the 404 error on the home route
 @app.route("/")
 def home():
-    return "Flask is running successfully!"
+    return redirect("/login")
 
 
 # User Registration
@@ -171,11 +171,32 @@ def admin():
     if request.method == "POST":
         if request.form["username"] == "admin" and request.form["password"] == "admin":
             session["admin"] = True
-            return redirect("/admin/dashboard")
+            return redirect("/results")
         else:
             return "Invalid admin login"
 
     return render_template("admin.html")
+
+# Admin
+@app.route("/results")
+def results():
+    if "admin" not in session:
+        return redirect("/admin")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT candidates.name, candidates.party, COUNT(blockchain.id) AS votes
+        FROM blockchain
+        JOIN candidates ON blockchain.candidate_id = candidates.id
+        GROUP BY candidates.id
+    """)
+    results = cursor.fetchall()
+    conn.close()
+
+    return render_template("result.html", results=results)
+
 
 
 # App runner (ALWAYS LAST)
