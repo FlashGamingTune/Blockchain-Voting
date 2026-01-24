@@ -1,49 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Cast Vote</title>
 
-<style>
-:root{
-  --bg:#0b0f19;--card:rgba(255,255,255,0.08);--border:rgba(255,255,255,0.15);
-  --text:#f5f7fb;--accent:#22c55e;--radius:18px
-}
-body{
-  min-height:100vh;display:grid;place-items:center;
-  background:radial-gradient(1200px 600px at 30% 10%,#14532d,transparent),var(--bg);
-  font-family:system-ui;color:var(--text)
-}
-.card{
-  width:100%;max-width:520px;padding:2.5rem;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:var(--radius)
-}
-h1{margin-bottom:1.5rem}
-.option{
-  padding:1rem;border:1px solid var(--border);
-  border-radius:12px;margin-bottom:0.8rem;display:flex;gap:0.8rem
-}
-button{
-  width:100%;margin-top:1.5rem;padding:0.9rem;
-  background:var(--accent);border:none;border-radius:12px;color:white
-}
-</style>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cast Vote</title>
+
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.15);
+      --text: #f5f7fb;
+      --accent: #22c55e;
+      --radius: 18px
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(1200px 600px at 30% 10%, #14532d, transparent), var(--bg);
+      font-family: system-ui;
+      color: var(--text)
+    }
+
+    .card {
+      width: 100%;
+      max-width: 520px;
+      padding: 2.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius)
+    }
+
+    h1 {
+      margin-bottom: 1.5rem
+    }
+
+    .option {
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 0.8rem
+    }
+
+    button {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.9rem;
+      background: var(--accent);
+      border: none;
+      border-radius: 12px;
+      color: white
+    }
+  </style>
 </head>
 
 <body>
-<form method="post" class="card">
-  <h1>Cast your vote</h1>
+  <form method="post" class="card">
+    <h1>Cast your vote</h1>
 
-  {% for candidate in candidates %}
-  <label class="option">
-    <input type="radio" name="candidate_id" value="{{ candidate.id }}" required>
-    {{ candidate.name }} — {{ candidate.party }}
-  </label>
-  {% endfor %}
+    {% for candidate in candidates %}
+    <label class="option">
+      <input type="radio" name="candidate_id" value="{{ candidate.id }}" required>
+      {{ candidate.name }} — {{ candidate.party }}
+    </label>
+    {% endfor %}
 
-  <button style="cursor: pointer;">Submit vote</button>
-</form>
+    <button style="cursor: pointer;">Submit vote</button>
+  </form>
 </body>
+
 </html>

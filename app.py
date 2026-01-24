@@ -198,6 +198,33 @@ def results():
     return render_template("result.html", results=results)
 
 
+# Admin - Manage Candidates
+@app.route("/admin/candidates", methods=["GET", "POST"])
+def manage_candidates():
+    if "admin" not in session:
+        return redirect("/admin")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        name = request.form["name"]
+        party = request.form["party"]
+
+        cursor.execute(
+            "INSERT INTO candidates (name, party) VALUES (?, ?)",
+            (name, party)
+        )
+        conn.commit()
+
+    cursor.execute("SELECT * FROM candidates")
+    candidates = cursor.fetchall()
+    conn.close()
+
+    return render_template("manage_candidates.html", candidates=candidates)
+
+
+
 
 # App runner (ALWAYS LAST)
 if __name__ == "__main__":

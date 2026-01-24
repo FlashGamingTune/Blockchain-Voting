@@ -5,19 +5,29 @@
 <title>Admin · Control Panel</title>
 
 <style>
+
 :root {
-  --bg: #0e0f12;
-  --surface: #15171c;
-  --surface-soft: #1c1f26;
-  --text-primary: #f5f7fa;
-  --text-secondary: #a8adba;
+  --bg: #0b0d11;
+  --panel: #141720;
+  --panel-soft: #1b1f2a;
+
+  --text-primary: #f4f6fb;
+  --text-secondary: #9aa1b2;
+
   --accent: #7c8cff;
   --accent-muted: #5f6fe0;
-  --radius: 14px;
-  --radius-sm: 8px;
-  --shadow: 0 20px 50px rgba(0,0,0,.45);
+  --danger: #ff6b6b;
+
+  --radius-lg: 16px;
+  --radius-md: 10px;
+
+  --shadow-lg: 0 30px 80px rgba(0,0,0,.55);
+  --shadow-sm: 0 10px 30px rgba(0,0,0,.35);
+
   --transition: 220ms cubic-bezier(.2,.8,.2,1);
 }
+
+   /* RESET */
 
 * {
   box-sizing: border-box;
@@ -27,39 +37,90 @@
 
 html {
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
-  background: var(--bg);
+  background: radial-gradient(
+    1200px 600px at top center,
+    #12162a 0%,
+    var(--bg) 55%
+  );
   color: var(--text-primary);
 }
 
 body {
   min-height: 100vh;
   display: grid;
+  grid-template-rows: auto 1fr;
+  padding: 28px;
+}
+
+   /* TOP ADMIN NAV */
+
+.admin-nav {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.admin-nav a {
+  text-decoration: none;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  border-radius: var(--radius-md);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.admin-nav a:hover {
+  color: var(--text-primary);
+  background: rgba(124,140,255,0.15);
+}
+
+.admin-nav a.logout {
+  color: #ff8c8c;
+}
+
+.admin-nav a.logout:hover {
+  background: rgba(255,107,107,0.15);
+}
+
+   /* AUTH PANEL */
+
+.panel-wrapper {
+  display: grid;
   place-items: center;
-  padding: 24px;
 }
 
-.card {
+.panel {
   width: 100%;
-  max-width: 420px;
-  background: linear-gradient(180deg, var(--surface), var(--surface-soft));
-  border-radius: var(--radius);
-  padding: 36px;
-  box-shadow: var(--shadow);
-  overflow: hidden; /* prevents any visual bleed */
+  max-width: 440px;
+  background: linear-gradient(
+    180deg,
+    var(--panel),
+    var(--panel-soft)
+  );
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
 }
 
-h1 {
-  font-size: 1.6rem;
+   /* TYPOGRAPHY */
+
+.panel h1 {
+  font-size: 1.65rem;
   font-weight: 600;
   margin-bottom: 6px;
-  text-align: left;
+  letter-spacing: -0.02em;
 }
 
-.subtitle {
-  color: var(--text-secondary);
+.panel .subtitle {
   font-size: 0.95rem;
-  margin-bottom: 28px;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
 }
+
+   /* FORM */
 
 form {
   display: grid;
@@ -68,28 +129,39 @@ form {
 }
 
 input {
-  width: 100%; /* 🔒 CRITICAL FIX */
-  padding: 14px;
-  background: #0b0c10;
-  border: 1px solid #22242c;
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
+  width: 100%;
+  padding: 14px 15px;
   font-size: 0.95rem;
+  background: #0a0c12;
+  color: var(--text-primary);
+  border: 1px solid #232634;
+  border-radius: var(--radius-md);
   transition: var(--transition);
+}
+
+input::placeholder {
+  color: #7d8497;
 }
 
 input:focus {
   outline: none;
   border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(124,140,255,.25);
 }
 
+   /* BUTTON */
+
 button {
+  margin-top: 12px;
   width: 100%;
-  margin-top: 10px;
   padding: 14px;
   border: none;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--accent), var(--accent-muted));
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    var(--accent-muted)
+  );
   color: white;
   font-size: 0.95rem;
   font-weight: 500;
@@ -99,20 +171,57 @@ button {
 
 button:hover {
   transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+   /* RESPONSIVE */
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 32px 24px;
+  }
 }
 </style>
 </head>
 
 <body>
-  <div class="card">
-    <h1>Admin access</h1>
-    <p class="subtitle">Restricted system controls</p>
 
-    <form method="post">
-      <input type="text" name="username" placeholder="Admin username" required>
-      <input type="password" name="password" placeholder="Admin password" required>
-      <button>Authenticate</button>
-    </form>
-  </div>
+  <!-- ADMIN NAVIGATION -->
+  <nav class="admin-nav">
+    <a href="/admin/candidates">Manage Candidates</a>
+    <a href="/results">View Results</a>
+    <a href="/logout" class="logout">Logout</a>
+  </nav>
+
+  <!-- AUTH PANEL -->
+  <main class="panel-wrapper">
+    <section class="panel">
+      <h1>Administrator Access</h1>
+      <p class="subtitle">
+        Authorized personnel only. All actions are logged.
+      </p>
+
+      <form method="post">
+        <input
+          type="text"
+          name="username"
+          placeholder="Admin username"
+          required
+        >
+        <input
+          type="password"
+          name="password"
+          placeholder="Admin password"
+          required
+        >
+        <button>Authenticate</button>
+      </form>
+    </section>
+  </main>
+
 </body>
 </html>
