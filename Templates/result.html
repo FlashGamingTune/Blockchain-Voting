@@ -77,20 +77,20 @@
   <canvas id="voteChart" style="margin-top:40px;"></canvas>
 
   <script>
-    const labels = {{ results | map(attribute = 'name') | list | safe }};
-    const votes = {{ results | map(attribute = 'votes') | list | safe }};
+const labels = {{ results | map(attribute='name') | list | safe }};
+const votes = {{ results | map(attribute='votes') | list | safe }};
 
-    new Chart(document.getElementById("voteChart"), {
-      type: "bar",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "Votes",
-          data: votes
-        }]
-      }
-    });
-  </script>
+new Chart(document.getElementById("voteChart"), {
+  type: "pie",
+  data: {
+    labels: labels,
+    datasets: [{
+      data: votes
+    }]
+  }
+});
+</script>
+
 
 </body>
 
