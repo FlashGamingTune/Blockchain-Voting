@@ -223,6 +223,20 @@ def manage_candidates():
 
     return render_template("manage_candidates.html", candidates=candidates)
 
+# Delete Candidate
+@app.route("/admin/delete_candidate/<int:id>")
+def delete_candidate(id):
+    if "admin" not in session:
+        return redirect("/admin")
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM candidates WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/admin/candidates")
+
 
 
 
