@@ -49,7 +49,7 @@ def create_tables():
     conn.commit()
     conn.close()
 
-# Fixes the 404 error on the home route
+# Routes
 @app.route("/")
 def home():
     return redirect("/login")
