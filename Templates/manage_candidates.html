@@ -69,11 +69,27 @@
     </form>
 
     <h3>Existing Candidates</h3>
-    <ol>
+
+    <table style="width:100%;margin-top:15px;">
+        <tr>
+            <th>Name</th>
+            <th>Party</th>
+            <th>Action</th>
+        </tr>
+
         {% for c in candidates %}
-        <li>{{ c.name }} ({{ c.party }})</li>
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.party }}</td>
+            <td>
+                <a href="/admin/delete_candidate/{{ c.id }}" style="color:red;text-decoration:none;">
+                    Delete
+                </a>
+            </td>
+        </tr>
         {% endfor %}
-    </ol>
+    </table>
+
 
 </body>
 
