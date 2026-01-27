@@ -1,9 +1,14 @@
 from blockchain import create_block
 from flask import Flask, render_template, request, redirect, session, url_for
 import sqlite3
+import os
 
 # Flask app setup
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder=os.path.join(os.path.dirname(__file__), "templates"),
+    static_folder="static"
+)
 app.secret_key =  "secret123"
 
 # Database functions
