@@ -6,7 +6,7 @@ import os
 # Flask app setup
 app = Flask(
     __name__,
-    static_folder=os.path.join(os.path.dirname(__file__), "templates"),
+    template_folder=os.path.join(os.path.dirname(__file__), "templates"),
     static_folder="static"
 )
 app.secret_key =  "secret123"
