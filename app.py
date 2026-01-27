@@ -7,7 +7,7 @@ import os
 app = Flask(
     __name__,
     static_folder=os.path.join(os.path.dirname(__file__), "templates"),
-    static_folder="templates"
+    static_folder="static"
 )
 app.secret_key =  "secret123"
 
