@@ -45,15 +45,26 @@
       text-decoration: none;
       font-weight: 500
     }
+
+    canvas {
+      height: 400px !important;
+      width: 400px !important;
+    }
   </style>
 </head>
 
 <body>
 
-  <div class="nav">
-    <a href="/admin/candidates">Manage Candidates</a>
-    <a href="/results">Refresh</a>
-    <a href="/logout">Logout</a>
+  <nav>
+    <div class="nav">
+      <a href="/admin/candidates">Manage Candidates</a>
+      <a href="/results">Refresh</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </nav>
+
+  <div style="display: flex;justify-content: center;align-items: center;">
+    <canvas id="voteChart" style="margin-top:40px;"></canvas>
   </div>
 
   <h1>Election Results</h1>
@@ -74,22 +85,21 @@
     {% endfor %}
   </table>
 
-  <canvas id="voteChart" style="margin-top:40px;"></canvas>
 
   <script>
-const labels = {{ results | map(attribute='name') | list | safe }};
-const votes = {{ results | map(attribute='votes') | list | safe }};
+    const labels = {{ results | map(attribute = 'name') | list | safe }};
+    const votes = {{ results | map(attribute = 'votes') | list | safe }};
 
-new Chart(document.getElementById("voteChart"), {
-  type: "pie",
-  data: {
-    labels: labels,
-    datasets: [{
-      data: votes
-    }]
-  }
-});
-</script>
+    new Chart(document.getElementById("voteChart"), {
+      type: "pie",
+      data: {
+        labels: labels,
+        datasets: [{
+          data: votes
+        }]
+      }
+    });
+  </script>
 
 
 </body>
