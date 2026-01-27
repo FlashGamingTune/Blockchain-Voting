@@ -3,11 +3,13 @@ from flask import Flask, render_template, request, redirect, session, url_for
 import sqlite3
 import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Flask app setup
 app = Flask(
     __name__,
-    template_folder=os.path.join(os.path.dirname(__file__), "templates"),
-    static_folder="static"
+    template_folder=os.path.join(BASE_DIR, "templates"),
+    static_folder=os.path.join(BASE_DIR, "static")
 )
 app.secret_key =  "secret123"
 
