@@ -52,37 +52,6 @@ body {
   padding: 28px;
 }
 
-   /* TOP ADMIN NAV */
-
-.admin-nav {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-bottom: 32px;
-}
-
-.admin-nav a {
-  text-decoration: none;
-  padding: 10px 16px;
-  font-size: 0.85rem;
-  border-radius: var(--radius-md);
-  background: rgba(255,255,255,0.04);
-  color: var(--text-secondary);
-  transition: var(--transition);
-}
-
-.admin-nav a:hover {
-  color: var(--text-primary);
-  background: rgba(124,140,255,0.15);
-}
-
-.admin-nav a.logout {
-  color: #ff8c8c;
-}
-
-.admin-nav a.logout:hover {
-  background: rgba(255,107,107,0.15);
-}
 
    /* AUTH PANEL */
 
@@ -190,12 +159,7 @@ button:active {
 
 <body>
 
-  <!-- ADMIN NAVIGATION -->
-  <nav class="admin-nav">
-    <a href="/admin/candidates">Manage Candidates</a>
-    <a href="/results">View Results</a>
-    <a href="/logout" class="logout">Logout</a>
-  </nav>
+
 
   <!-- AUTH PANEL -->
   <main class="panel-wrapper">

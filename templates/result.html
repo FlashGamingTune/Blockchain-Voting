@@ -1,107 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Election Results</title>
+<meta charset="UTF-8">
+<title>Election Results</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <style>
-    body {
-      background: #0b0f19;
-      color: #f5f7fb;
-      font-family: system-ui;
-      padding: 3rem
-    }
+<style>
+:root{
+  --bg:#0b0f19;
+  --panel:#121726;
+  --panel-soft:#171c2f;
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 2rem
-    }
+  --text:#f5f7fb;
+  --muted:#aab0c0;
 
-    th,
-    td {
-      padding: 1rem;
-      border-bottom: 1px solid #2a2f45;
-      text-align: left
-    }
+  --accent:#7c8cff;
+  --accent-soft:#5f6fe0;
+  --success:#22c55e;
 
-    th {
-      color: #aab0c0;
-      font-weight: 500
-    }
+  --radius-lg:20px;
+  --radius-md:14px;
 
-    .nav {
-      margin-bottom: 20px;
-      display: flex;
-      gap: 12px
-    }
+  --shadow:0 40px 90px rgba(0,0,0,.55);
+}
 
-    .nav a {
-      color: #22c55e;
-      text-decoration: none;
-      font-weight: 500
-    }
+*{box-sizing:border-box;margin:0;padding:0}
 
-    canvas {
-      height: 400px !important;
-      width: 400px !important;
-    }
-  </style>
+body{
+  min-height:100vh;
+  padding:40px;
+  font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui;
+  background:
+    radial-gradient(1200px 600px at 15% 10%,#1b255a,transparent),
+    radial-gradient(900px 500px at 90% 90%,#3b1d5a,transparent),
+    var(--bg);
+  color:var(--text);
+}
+
+/* NAV */
+.nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:40px;
+}
+
+.nav h1{
+  font-size:1.8rem;
+  letter-spacing:-0.02em;
+}
+
+.nav a{
+  text-decoration:none;
+  padding:10px 16px;
+  border-radius:12px;
+  font-size:0.85rem;
+  color:var(--muted);
+  background:rgba(255,255,255,0.04);
+  transition:0.2s;
+}
+
+.nav a:hover{
+  background:rgba(124,140,255,0.18);
+  color:var(--text);
+}
+
+.nav .logout{
+  color:#ff8c8c;
+}
+
+/* GRID */
+.dashboard{
+  display:grid;
+  grid-template-columns:1fr 420px;
+  gap:32px;
+}
+
+/* PANEL */
+.panel{
+  background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+  border-radius:var(--radius-lg);
+  padding:32px;
+  box-shadow:var(--shadow);
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:16px 10px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+th{
+  color:var(--muted);
+  font-weight:500;
+}
+
+tr:first-child td{
+  color:var(--success);
+  font-weight:600;
+}
+
+/* CHART */
+.chart-box{
+  display:grid;
+  place-items:center;
+}
+
+canvas{
+  width:280px!important;
+  height:280px!important;
+}
+
+/* FOOTER NOTE */
+.note{
+  margin-top:20px;
+  font-size:0.85rem;
+  color:var(--muted);
+}
+
+@media(max-width:980px){
+  .dashboard{
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <nav>
-    <div class="nav">
-      <a href="/admin/candidates">Manage Candidates</a>
-      <a href="/results">Refresh</a>
-      <a href="/logout">Logout</a>
-    </div>
-  </nav>
+<!-- NAV -->
+<div class="nav">
+  <h1>Election Results</h1>
+  <div>
+    <a href="/admin/candidates">Manage Candidates</a>
+    <a href="/logout" class="logout">Logout</a>
+  </div>
+</div>
 
-  <div style="display: flex;justify-content: center;align-items: center;">
-    <canvas id="voteChart" style="margin-top:40px;"></canvas>
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+  <!-- RESULTS TABLE -->
+  <div class="panel">
+    <h2 style="margin-bottom:18px">Vote Summary</h2>
+
+    <table>
+      <tr>
+        <th>Candidate</th>
+        <th>Party</th>
+        <th>Votes</th>
+      </tr>
+
+      {% for row in results %}
+      <tr>
+        <td>{{ row.name }}</td>
+        <td>{{ row.party }}</td>
+        <td>{{ row.votes }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <div class="note">
+      ✔ Data sourced directly from blockchain ledger
+    </div>
   </div>
 
-  <h1>Election Results</h1>
+  <!-- CHART -->
+  <div class="panel chart-box">
+    <canvas id="voteChart"></canvas>
+  </div>
 
-  <table>
-    <tr>
-      <th>Candidate</th>
-      <th>Party</th>
-      <th>Votes</th>
-    </tr>
+</div>
 
-    {% for row in results %}
-    <tr>
-      <td>{{ row.name }}</td>
-      <td>{{ row.party }}</td>
-      <td>{{ row.votes }}</td>
-    </tr>
-    {% endfor %}
-  </table>
+<script>
+const labels = {{ results | map(attribute='name') | list | safe }};
+const votes = {{ results | map(attribute='votes') | list | safe }};
 
-
-  <script>
-    const labels = {{ results | map(attribute = 'name') | list | safe }};
-    const votes = {{ results | map(attribute = 'votes') | list | safe }};
-
-    new Chart(document.getElementById("voteChart"), {
-      type: "pie",
-      data: {
-        labels: labels,
-        datasets: [{
-          data: votes
-        }]
+new Chart(document.getElementById("voteChart"),{
+  type:"pie",
+  data:{
+    labels:labels,
+    datasets:[{
+      data:votes,
+      backgroundColor:[
+        "#7c8cff",
+        "#22c55e",
+        "#f59e0b",
+        "#ef4444",
+        "#06b6d4"
+      ]
+    }]
+  },
+  options:{
+    responsive:false,
+    plugins:{
+      legend:{
+        position:"bottom",
+        labels:{color:"#f5f7fb"}
       }
-    });
-  </script>
-
+    }
+  }
+});
+</script>
 
 </body>
-
 </html>
