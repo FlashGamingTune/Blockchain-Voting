@@ -12,18 +12,11 @@
   --bg:#0b0f19;
   --panel:#121726;
   --panel-soft:#171c2f;
-
   --text:#f5f7fb;
   --muted:#aab0c0;
-
   --accent:#7c8cff;
-  --accent-soft:#5f6fe0;
-  --success:#22c55e;
-
-  --radius-lg:20px;
-  --radius-md:14px;
-
-  --shadow:0 40px 90px rgba(0,0,0,.55);
+  --winner:#22c55e;
+  --radius:18px;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -31,10 +24,10 @@
 body{
   min-height:100vh;
   padding:40px;
-  font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui;
+  font-family:system-ui;
   background:
-    radial-gradient(1200px 600px at 15% 10%,#1b255a,transparent),
-    radial-gradient(900px 500px at 90% 90%,#3b1d5a,transparent),
+    radial-gradient(900px 500px at 20% 10%,#1b255a,transparent),
+    radial-gradient(800px 400px at 90% 90%,#3b1d5a,transparent),
     var(--bg);
   color:var(--text);
 }
@@ -44,46 +37,44 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:40px;
+  margin-bottom:35px;
 }
 
-.nav h1{
-  font-size:1.8rem;
-  letter-spacing:-0.02em;
-}
+.nav h1{font-size:1.8rem}
 
 .nav a{
   text-decoration:none;
-  padding:10px 16px;
+  padding:10px 14px;
   border-radius:12px;
-  font-size:0.85rem;
+  font-size:.85rem;
   color:var(--muted);
-  background:rgba(255,255,255,0.04);
-  transition:0.2s;
+  background:rgba(255,255,255,.06);
 }
 
-.nav a:hover{
-  background:rgba(124,140,255,0.18);
-  color:var(--text);
-}
+.nav a:hover{background:rgba(124,140,255,.18);color:white}
 
-.nav .logout{
-  color:#ff8c8c;
-}
-
-/* GRID */
+/* LAYOUT */
 .dashboard{
   display:grid;
   grid-template-columns:1fr 420px;
   gap:32px;
 }
 
-/* PANEL */
 .panel{
   background:linear-gradient(180deg,var(--panel),var(--panel-soft));
-  border-radius:var(--radius-lg);
-  padding:32px;
-  box-shadow:var(--shadow);
+  border-radius:var(--radius);
+  padding:28px;
+}
+
+/* WINNER BADGE */
+.winner-badge{
+  display:inline-flex;
+  gap:8px;
+  padding:8px 14px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#22c55e,#16a34a);
+  font-weight:600;
+  margin-bottom:16px;
 }
 
 /* TABLE */
@@ -93,95 +84,127 @@ table{
 }
 
 th,td{
-  padding:16px 10px;
-  border-bottom:1px solid rgba(255,255,255,0.08);
+  padding:14px 8px;
+  border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-th{
-  color:var(--muted);
-  font-weight:500;
+th{color:var(--muted);font-weight:500}
+
+tr.winner{
+  background:linear-gradient(90deg,rgba(34,197,94,.2),transparent);
 }
 
-tr:first-child td{
-  color:var(--success);
+/* ANIMATED VOTES */
+.vote{
   font-weight:600;
 }
 
 /* CHART */
-.chart-box{
-  display:grid;
-  place-items:center;
-}
-
 canvas{
-  width:280px!important;
-  height:280px!important;
+  width:260px!important;
+  height:260px!important;
+  margin:auto;
 }
 
-/* FOOTER NOTE */
-.note{
-  margin-top:20px;
-  font-size:0.85rem;
-  color:var(--muted);
+/* CONFETTI */
+.confetti{
+  position:fixed;
+  width:6px;
+  height:10px;
+  background:#22c55e;
+  top:-10px;
+  animation:fall 3s linear forwards;
 }
 
-@media(max-width:980px){
-  .dashboard{
-    grid-template-columns:1fr;
+@keyframes fall{
+  to{
+    transform:translateY(100vh) rotate(360deg);
+    opacity:0;
   }
+}
+
+@media(max-width:900px){
+  .dashboard{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<!-- NAV -->
 <div class="nav">
   <h1>Election Results</h1>
   <div>
     <a href="/admin/candidates">Manage Candidates</a>
-    <a href="/logout" class="logout">Logout</a>
+    <a href="/admin/verify">Verify Blockchain</a>
+    <a href="/logout">Logout</a>
   </div>
 </div>
 
-<!-- DASHBOARD -->
 <div class="dashboard">
 
-  <!-- RESULTS TABLE -->
-  <div class="panel">
-    <h2 style="margin-bottom:18px">Vote Summary</h2>
+<!-- RESULTS PANEL -->
+<div class="panel">
 
-    <table>
-      <tr>
-        <th>Candidate</th>
-        <th>Party</th>
-        <th>Votes</th>
-      </tr>
+{% if results %}
+<div class="winner-badge">🏆 Winner: {{ results[0].name }}</div>
+{% endif %}
 
-      {% for row in results %}
-      <tr>
-        <td>{{ row.name }}</td>
-        <td>{{ row.party }}</td>
-        <td>{{ row.votes }}</td>
-      </tr>
-      {% endfor %}
-    </table>
+<table>
+<tr>
+  <th>Candidate</th>
+  <th>Party</th>
+  <th>Votes</th>
+</tr>
 
-    <div class="note">
-      ✔ Data sourced directly from blockchain ledger
-    </div>
-  </div>
+{% for row in results %}
+<tr class="{% if loop.first %}winner{% endif %}">
+  <td>{{ row.name }}</td>
+  <td>{{ row.party }}</td>
+  <td class="vote" data-votes="{{ row.votes }}">0</td>
+</tr>
+{% endfor %}
+</table>
 
-  <!-- CHART -->
-  <div class="panel chart-box">
-    <canvas id="voteChart"></canvas>
-  </div>
+</div>
+
+<!-- CHART PANEL -->
+<div class="panel">
+  <canvas id="voteChart"></canvas>
+</div>
 
 </div>
 
 <script>
-const labels = {{ results | map(attribute='name') | list | safe }};
-const votes = {{ results | map(attribute='votes') | list | safe }};
+/* -------- ANIMATED COUNTER -------- */
+document.querySelectorAll(".vote").forEach(el=>{
+  const target = +el.dataset.votes;
+  let count = 0;
+  const step = Math.max(1, Math.floor(target/30));
+
+  const interval = setInterval(()=>{
+    count += step;
+    if(count >= target){
+      el.textContent = target;
+      clearInterval(interval);
+    }else{
+      el.textContent = count;
+    }
+  },30);
+});
+
+/* -------- CONFETTI FOR WINNER -------- */
+for(let i=0;i<20;i++){
+  const confetti = document.createElement("div");
+  confetti.className="confetti";
+  confetti.style.left=Math.random()*100+"vw";
+  confetti.style.background=["#22c55e","#7c8cff","#f59e0b"][Math.floor(Math.random()*3)];
+  document.body.appendChild(confetti);
+  setTimeout(()=>confetti.remove(),3000);
+}
+
+/* -------- PIE CHART -------- */
+const labels={{ results | map(attribute='name') | list | safe }};
+const votes={{ results | map(attribute='votes') | list | safe }};
 
 new Chart(document.getElementById("voteChart"),{
   type:"pie",
@@ -189,22 +212,13 @@ new Chart(document.getElementById("voteChart"),{
     labels:labels,
     datasets:[{
       data:votes,
-      backgroundColor:[
-        "#7c8cff",
-        "#22c55e",
-        "#f59e0b",
-        "#ef4444",
-        "#06b6d4"
-      ]
+      backgroundColor:["#22c55e","#7c8cff","#f59e0b","#ef4444"]
     }]
   },
   options:{
     responsive:false,
     plugins:{
-      legend:{
-        position:"bottom",
-        labels:{color:"#f5f7fb"}
-      }
+      legend:{position:"bottom",labels:{color:"#f5f7fb"}}
     }
   }
 });

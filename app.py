@@ -156,13 +156,21 @@ def vote():
 
         session["has_voted"] = 1
 
-        return "Vote cast successfully!"
+        return redirect("/success")
 
     cursor.execute("SELECT * FROM candidates")
     candidates = cursor.fetchall()
     conn.close()
 
     return render_template("vote.html", candidates=candidates)
+
+# Vote Success Page
+@app.route("/success")
+def vote_success():
+    if "user_id" not in session:
+        return redirect("/login")
+    return render_template("vote_success.html")
+
 
 # Logout
 @app.route("/logout")
@@ -182,7 +190,7 @@ def admin():
 
     return render_template("admin.html")
 
-# Admin
+# View Results
 @app.route("/results")
 def results():
     if "admin" not in session:
