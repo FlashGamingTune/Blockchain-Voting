@@ -57,7 +57,7 @@ def create_tables():
 # Routes
 @app.route("/")
 def home():
-    return redirect("/login")
+    return redirect("/register")
 
 
 # User Registration
